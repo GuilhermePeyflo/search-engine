@@ -4,7 +4,7 @@ import log
 database = DataBase.Database()
 
 
-def search_categories_and_prices(queries: dict):
+def search_categories_and_prices(queries: dict) -> tuple:
     query_search = dict()
     query_search["user_id"] = queries["user_id"]
     if queries["category"] == "" and queries["price_range"] == "":

@@ -9,7 +9,7 @@ class Database:
         self.books_collection = self.db["books"]
         self.search_history = self.db["search_history"]
 
-    def search_for_price(self, queries: dict):
+    def search_for_price(self, queries: dict) -> list:
         result_search = ""
         if int(queries["item_price"]) <= 50:
             result_search = list(self.books_collection.find({"item_price": {"$lte": 50}}))
@@ -19,7 +19,7 @@ class Database:
             result_search = list(self.books_collection.find({"item_price": {"$gt": 100}}))
         return result_search
 
-    def search_for_category(self, queries: dict):
+    def search_for_category(self, queries: dict) -> list:
         if len(queries["category"]) > 1:
             for category in range(len(queries["category"])):
                 queries["category"][category] = queries["category"][category].capitalize()
@@ -30,7 +30,7 @@ class Database:
             result_search = list(self.books_collection.find({"category": {"$in": queries["category"]}}))
             return result_search
 
-    def search_for_category_price(self, queries: dict):
+    def search_for_category_price(self, queries: dict) -> list:
         results = list()
         search_category = list(self.search_for_category(queries))
         search_price = list(self.search_for_price(queries))
@@ -38,3 +38,11 @@ class Database:
             if book in search_price:
                 results.append(book)
         return results
+
+    def latest_books_released(self) -> tuple:
+        try:
+            sort = list({'published_at': -1}.items())
+            result_search = list(self.books_collection.find(sort=sort))
+            return result_search, 200
+        except:
+            return [], 500
