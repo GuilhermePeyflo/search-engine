@@ -21,6 +21,9 @@ class Database:
 
     def search_for_category(self, queries: dict):
         if len(queries["category"]) > 1:
+            for category in range(len(queries["category"])):
+                queries["category"][category] = queries["category"][category].capitalize()
+            print(queries["category"])
             result_search = list(self.books_collection.find({"category": {"$in": queries["category"]}}))
             return result_search
         else:
