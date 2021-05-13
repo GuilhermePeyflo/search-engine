@@ -12,11 +12,11 @@ class Database:
     def search_for_price(self, queries: dict):
         result_search = ""
         if int(queries["item_price"]) <= 50:
-            result_search = self.books_collection.find({"item_price": {"$lte": 50}})
+            result_search = list(self.books_collection.find({"item_price": {"$lte": 50}}))
         elif 50 < int(queries["item_price"]) <= 100:
-            result_search = self.books_collection.find({"$and": [{"item_price": {"$gt": 50}}, {"item_price": {"$lte": 100}}]})
+            result_search = list(self.books_collection.find({"$and": [{"item_price": {"$gt": 50}}, {"item_price": {"$lte": 100}}]}))
         elif int(queries["item_price"]) > 100:
-            result_search = self.books_collection.find({"item_price": {"$gt": 100}})
+            result_search = list(self.books_collection.find({"item_price": {"$gt": 100}}))
         return result_search
 
     def search_for_category(self, queries: dict):
