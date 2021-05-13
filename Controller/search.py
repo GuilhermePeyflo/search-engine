@@ -23,7 +23,6 @@ def search_categories_and_prices(queries: dict):
         log.generate_log_from_search_engine(queries["user_id"], None, queries["category"], None)
         lista = queries["category"].split(",")
         query_search["category"] = lista
-        # print("print lista", lista)
         try:
             result_search = database.search_for_category(query_search)
             return result_search, 200
@@ -31,7 +30,8 @@ def search_categories_and_prices(queries: dict):
             return [], 500
 
     else:
-        log.generate_log_from_search_engine(user_id=queries["user_id"], string_search=None,category=queries["category"],price_range=queries["price_range"])
+        log.generate_log_from_search_engine(user_id=queries["user_id"], string_search=None,category=queries["category"],
+                                            price_range=queries["price_range"])
         lista = queries["category"].split(",")
         query_search["category"] = lista
         query_search["item_price"] = queries["price_range"]

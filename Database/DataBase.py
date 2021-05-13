@@ -24,7 +24,6 @@ class Database:
             result_search = list(self.books_collection.find({"category": {"$in": queries["category"]}}))
             return result_search
         else:
-            print("entrou no ELSE", queries["category"])
             result_search = list(self.books_collection.find({"category": {"$in": queries["category"]}}))
             return result_search
 
