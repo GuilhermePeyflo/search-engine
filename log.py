@@ -2,21 +2,15 @@ from datetime import datetime
 from Database import DataBase
 
 
-def generate_log_from_search_engine(user_id: str = None,
-                                    string_search: str = None,
-                                    category: str = None,
-                                    price_range: int = None):
-    dict_persist = dict()
-    dict_persist["created_at"] = datetime.now()
-    if user_id:
-        dict_persist["user_id"] = user_id
-    if string_search:
-        dict_persist["string_search"] = string_search
-    if category:
-        dict_persist["category"] = category
-    if price_range:
-        dict_persist["price_range"] = price_range
+def generate_log_from_search_engine(filters: dict):
+    """
+    A função recebe os itens pesquisados e registra no log de buscas
+    :param filters: itens pesquisados pelo usuário
+    :return: True
+    """
+    search = filters.copy()
+    search["created_at"] = datetime.now()
 
-    execute = DataBase.Database().search_history.insert_one(dict_persist)
+    execute = DataBase.Database().search_history.insert_one(search)
     if execute.inserted_id:
         return True

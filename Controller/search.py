@@ -1,43 +1,48 @@
+import ast
 from Database import DataBase
-import log
 
 database = DataBase.Database()
 
 
-def search_categories_and_prices(queries: dict):
-    query_search = dict()
-    query_search["user_id"] = queries["user_id"]
-    if queries["category"] == "" and queries["price_range"] == "":
-        return [], 200
+def general_search(filters: dict) -> list:
+    """
+    Função que valida os dados enviados pelo front-end, conforme filtros selecionados, levando em consideração o formato
+    das informações (dicionario(s), lista, string) e também se o preço foi filtrado ou não.
+    :param filters: filtros selecionados pelo usuário
+    :return: list, result com a lista de livros filtrados
+    """
+    query = "{ '$and': [ { '$or': [ "
+    price = ""
 
-    if queries["category"] == "":
-        log.generate_log_from_search_engine(queries["user_id"], None, None, queries["price_range"])
-        query_search["item_price"] = queries["price_range"]
-        try:
-            result_search = database.search_for_price(query_search)
-            return result_search, 200
-        except:
-            return [], 500
+    for filter in filters:
+        if isinstance(filters[filter], dict):
+            if filter == "price":
+                price += "]} , { '$and' : [{" + "'item_price': { '$gte' :" + f"{filters[filter]['min']}" + "}}, " \
+                        "{" + "'item_price': { '$lte' :" + f"{filters[filter]['max']}" + "}} ] }"
+            else:
+                for item in filters[filter]:
+                    query += "{" + f"'{filter}.{item}': '{filters[filter][item]}'" + "}, "
+        elif isinstance(filters[filter], list):
+            if isinstance(filters[filter][0], dict):
+               for item_dict in filters[filter]:
+                    for item in item_dict:
+                        query += "{" + f"'{filter}.{item}': '{item_dict[item]}'" + "}, "
+            else:
+                for item in filters[filter]:
+                    query += "{" + f"'{filter}': '{item}'" + "}, "
+        else:
+            query += "{" + f"'{filter}': '{filters[filter]}'" + "}, "
 
-    if queries["price_range"] == "":
-        log.generate_log_from_search_engine(queries["user_id"], None, queries["category"], None)
-        lista = queries["category"].split(",")
-        query_search["category"] = lista
-        try:
-            result_search = database.search_for_category(query_search)
-            return result_search, 200
-        except:
-            return [], 500
-
+    query = query[0:-2]
+    if price != "":
+        query += price + "]}"
     else:
-        log.generate_log_from_search_engine(user_id=queries["user_id"], string_search=None,category=queries["category"],
-                                            price_range=queries["price_range"])
-        lista = queries["category"].split(",")
-        query_search["category"] = lista
-        query_search["item_price"] = queries["price_range"]
-        try:
-            result_search = database.search_for_category_price(query_search)
-            return result_search, 200
-        except:
-            return [], 500
+        print("else")
+        query += "]}] }"
+    query = ast.literal_eval(query)
+    result = database.general_search(query)
+    return result
+
+
+
 
