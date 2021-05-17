@@ -1,6 +1,7 @@
 from unittest import TestCase, mock
 import Controller.search
 
+
 class TestSearch(TestCase):
 
     @mock.patch("Controller.search.database.general_search")
@@ -23,5 +24,21 @@ class TestSearch(TestCase):
 
         self.assertEqual(Controller.search.general_search(filters), ())
         self.assertNotEqual(Controller.search.general_search(filters), ([1, 2, 3]))
+
+    @mock.patch("Controller.search.jsonify")
+    def test_data_treatment_works(self, mock_json):
+        mock_json.side_effect = [None, [], []]
+        response = None
+        self.assertEqual(Controller.search.data_treatment(response), (None, 400))
+
+        response = ([{"_id": "609ec0b6d2334d102f6561bb"}], 200)
+        self.assertEqual(Controller.search.data_treatment(response), ([], 200))
+
+        response = ([], 200)
+        self.assertEqual(Controller.search.data_treatment(response), ([], 400))
+
+        response = ([], 500)
+        self.assertEqual(Controller.search.data_treatment(response), ("Problema de conexão", 500))
+
 
 

@@ -4,7 +4,6 @@ from bson.objectid import ObjectId
 from pymongo.errors import ConnectionFailure
 
 
-
 class Database:
 
     def __init__(self):
@@ -19,8 +18,9 @@ class Database:
         :param query: query formada para buscas em search
         :return: list, result com a lista de livros após aplicado(s) filtro(s)
         """
+
         try:
-            result = list(self.books_collection.find(query))
+            result = list(self.new_books.find(query))
             return result, 200
         except Exception as ex:
             return ex.args[0], 500
@@ -67,10 +67,16 @@ class Database:
         except ConnectionFailure as ex:
             return ex.args[0], 500
 
-    def search_by_id(self, id):
+    def search_by_id(self, id: str) -> tuple:
+        """
+        A função recebe o id de um livro selecionado pelo usuário no front-end, conslta esse id no banco para retornar
+        todas as informações do livro
+
+        :param id: Id do livro selecionado pelo usuário no front-end
+        :return: Tupla com o livro e status code
+        """
         try:
-            id = ObjectId(id)
-            result = list(self.new_books.find({"_id": id}))
+            result = list(self.new_books.find({"_id": ObjectId(id)}))
             return result, 200
         except ConnectionFailure as ex:
             return ex.args[0], 500
