@@ -1,4 +1,6 @@
 from flask import Flask, request, jsonify
+
+import Controller.search
 from Controller import search
 from ast import literal_eval
 import log
@@ -18,11 +20,7 @@ def general_search():
     log.generate_log_from_search_engine(filters)
     #talvez um pop aqui seja necessário...
     response = search.general_search(filters)
-    if response:
-        for book_index in range(len(response)):
-            response[book_index]["_id"] = str(response[book_index]["_id"])
-        return jsonify(response), 200
-    return response, 500
+    return Controller.search.data_treatment(response)
 
 
 @app.route("/books_by_rating")
@@ -32,11 +30,7 @@ def books_by_rating():
     :return: tuple, response com a lista de livros ordenada pelas avaliações (estrelas)
     """
     response = DataBase.Database().books_by_rating()
-    if response:
-        for book_index in range(len(response)):
-            response[book_index]["_id"] = str(response[book_index]["_id"])
-        return jsonify(response), 200
-    return response, 500
+    return Controller.search.data_treatment(response)
 
 
 @app.route("/books_by_string_search")
@@ -47,11 +41,7 @@ def books_by_string_search():
     """
     string_search = request.args['search']
     response = DataBase.Database().books_by_string_search(string_search)
-    if response:
-        for book_index in range(len(response)):
-            response[book_index]["_id"] = str(response[book_index]["_id"])
-        return jsonify(response), 200
-    return response, 500
+    return Controller.search.data_treatment(response)
 
 
 @app.route("/books_by_released")
@@ -61,11 +51,13 @@ def books_by_released():
     :return: tuple, response com a lista de livros ordenada pela data de publicação.
     """
     response = DataBase.Database().latest_books_released()
-    if response:
-        for book_index in range(len(response)):
-            response[book_index]["_id"] = str(response[book_index]["_id"])
-        return jsonify(response), 200
-    return response, 500
+    return Controller.search.data_treatment(response)
 
+
+@app.route("/selected_book")
+def selected_book():
+    book_id = request.args["id"]
+    response = DataBase.Database().search_by_id(book_id)
+    return Controller.search.data_treatment(response)
 
 app.run(debug=True)
