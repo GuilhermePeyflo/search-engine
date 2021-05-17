@@ -50,7 +50,7 @@ def data_treatment(response):
     dados para enviar ao front-end
 
     Os dois returns com 400 se referem ao recebimento de uma string vazia (primeiro) e uma lista vazia (último). MAS
-    é esperado que não ocorra pq o front não deve enviar filtros vazios.
+    é esperado que não ocorra porque o front não deve enviar filtros vazios.
     :param response: Resposta retornado das funções de consulta no banco de dados, com lista de items pesquisados e
     status code da requisição
     :return: Tupla com uma lista de dados e status code da request

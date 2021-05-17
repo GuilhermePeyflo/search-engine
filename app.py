@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify
 import Controller.search
 from Controller import search
 from ast import literal_eval
-import log
+import log_for_search
 from Database import DataBase
 
 app = Flask(__name__)
@@ -17,7 +17,7 @@ def general_search():
     """
     filters = request.data.decode("utf-8")
     filters = literal_eval(filters)
-    log.generate_log_from_search_engine(filters)
+    log_for_search.generate_log_from_search_engine(filters)
     #talvez um pop aqui seja necessário...
     response = search.general_search(filters)
     return Controller.search.data_treatment(response)
