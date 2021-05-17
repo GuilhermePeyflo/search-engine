@@ -40,6 +40,7 @@ def books_by_string_search():
     :return: tuple, response com a lista de livros que contém a busca digitada no front-end
     """
     string_search = request.args['search']
+    log_for_search.generate_log_from_search_engine({"string_search": string_search})
     response = DataBase.Database().books_by_string_search(string_search)
     return Controller.search.data_treatment(response)
 
@@ -59,5 +60,6 @@ def selected_book():
     book_id = request.args["id"]
     response = DataBase.Database().search_by_id(book_id)
     return Controller.search.data_treatment(response)
+
 
 app.run(debug=True)
