@@ -1,10 +1,10 @@
 from flask import Flask, request
-
 import Controller.search
 from Controller import search
 from ast import literal_eval
 import log_for_search
 from Database import DataBase
+
 
 app = Flask(__name__)
 
@@ -61,5 +61,9 @@ def selected_book():
     response = DataBase.Database().search_by_id(book_id)
     return Controller.search.data_treatment(response)
 
+@app.route("/get_all_searches")
+def get_all_searches():
+    response = DataBase.Database().get_history_searches()
+    return Controller.search.data_treatment(response)
 
 app.run(debug=True)

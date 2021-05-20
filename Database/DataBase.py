@@ -81,3 +81,9 @@ class Database:
         except ConnectionFailure as ex:
             return ex.args[0], 500
 
+    def get_history_searches(self) -> tuple:
+        try:
+            result = list(self.search_history.find({}))
+            return result, 200
+        except ConnectionFailure as ex:
+            return ex.args[0], 500
