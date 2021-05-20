@@ -14,3 +14,5 @@ def generate_log_from_search_engine(filters: dict):
     execute = DataBase.Database().search_history.insert_one(search)
     if execute.inserted_id:
         return True
+
+
