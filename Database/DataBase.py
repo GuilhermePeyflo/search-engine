@@ -1,6 +1,5 @@
 import ast
 from datetime import datetime
-
 from flask import request
 from pymongo import MongoClient
 from bson.objectid import ObjectId

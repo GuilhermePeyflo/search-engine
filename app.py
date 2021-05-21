@@ -68,6 +68,3 @@ def get_all_searches():
     return Controller.search.data_treatment(response)
 
 app.run(debug=True)
-
-
-
