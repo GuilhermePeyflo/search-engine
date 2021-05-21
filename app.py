@@ -61,9 +61,13 @@ def selected_book():
     response = DataBase.Database().search_by_id(book_id)
     return Controller.search.data_treatment(response)
 
-@app.route("/get_all_searches")
+
+@app.route("/get_all_searches", methods=["POST"])
 def get_all_searches():
     response = DataBase.Database().get_history_searches()
     return Controller.search.data_treatment(response)
 
 app.run(debug=True)
+
+
+
