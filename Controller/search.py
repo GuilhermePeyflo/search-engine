@@ -12,6 +12,9 @@ def general_search(filters: dict) -> tuple:
     :param filters: filtros selecionados pelo usuário
     :return: list, result com a lista de livros filtrados
     """
+    if filters == {}:
+        return [], 400
+
     query = "{ '$and': [ { '$or': [ "
     price = ""
 

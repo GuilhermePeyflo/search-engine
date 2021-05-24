@@ -57,7 +57,7 @@ def books_by_released():
 
 @app.route("/selected_book")
 def selected_book():
-    book_id = request.args["id"]
+    book_id = request.args["product_id"]
     response = DataBase.Database().search_by_id(book_id)
     return Controller.search.data_treatment(response)
 
