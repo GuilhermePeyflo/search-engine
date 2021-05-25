@@ -1,6 +1,5 @@
 import ast
 from datetime import datetime
-from flask import request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from pymongo.errors import ConnectionFailure
@@ -83,7 +82,7 @@ class Database:
         except ConnectionFailure as ex:
             return ex.args[0], 500
 
-    def get_history_searches(self) -> tuple:
+    def get_history_searches(self, request) -> tuple:
         request_body = request.get_json()
         from_dt, to_dt = request_body["initial_date"], request_body["final_date"]
         from_dt = datetime.strptime(from_dt, '%Y-%m-%d')

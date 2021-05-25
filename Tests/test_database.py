@@ -2,9 +2,6 @@ from unittest import TestCase, mock
 from flask import request
 from Database import DataBase
 
-
-
-
 class TestDatabase(TestCase):
 
     @mock.patch("Database.DataBase.Database.new_books", create=True)
@@ -46,13 +43,9 @@ class TestDatabase(TestCase):
 
     @mock.patch("Database.DataBase.Database.search_history", create=True)
     @mock.patch("Database.DataBase.datetime")
-    @mock.patch("Database.DataBase.request")
-    def test_get_history_searches_works(self, mock_request, mock_datetime, mock_search_history):
-        mock_request.request.return_value = mock.Mock()
-        mock_request.request.get_json().return_value = {"initial_date", "final_date"}
-        mock_datetime.strptime.return_value = '%Y-%m-%d'
-
+    def test_get_history_searches_works(self, mock_datetime, mock_search_history):
+        mock_datetime.return_value = "2021-05-25"
+        request = mock.MagicMock()
         with mock.patch.object(DataBase.Database, "__init__", lambda x: None) as mock_db:
-            mock_search_history.find.return_value = []
-
-            self.assertEqual(DataBase.Database().search_by_id(""), ([], 200))
+            mock_search_history.return_value = []
+            self.assertEqual(DataBase.Database().get_history_searches(request)[1], 200)

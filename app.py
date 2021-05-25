@@ -64,7 +64,7 @@ def selected_book():
 
 @app.route("/get_all_searches", methods=["POST"])
 def get_all_searches():
-    response = DataBase.Database().get_history_searches()
+    response = DataBase.Database().get_history_searches(request)
     return Controller.search.data_treatment(response)
 
 app.run(debug=True)
