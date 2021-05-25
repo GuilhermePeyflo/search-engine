@@ -10,9 +10,10 @@ class Database:
 
     def __init__(self):
         self.conn = MongoClient("mongodb+srv://system:t7TRSmoJnO1DeZUa@cluster0.bawny.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", ssl=True, ssl_cert_reqs='CERT_NONE')
-        self.db = self.conn["database_teste"]
-        self.search_history = self.db["search_history"]
-        self.new_books = self.db["new_books"]
+        self.product_db = self.conn["product_db"]
+        self.book = self.product_db["book"]
+        self.users_search_db = self.conn["users_search_db"]
+        self.search_history = self.users_search_db["search_history"]
 
     def general_search(self, query: dict) -> tuple:
         """
@@ -22,7 +23,7 @@ class Database:
         """
 
         try:
-            result = list(self.new_books.find(query))
+            result = list(self.book.find(query))
             return result, 200
         except Exception as ex:
             return ex.args[0], 500
@@ -34,7 +35,7 @@ class Database:
         """
         try:
             sort = list({'rating': -1}.items())
-            result_search = list(self.new_books.find(sort=sort))
+            result_search = list(self.book.find(sort=sort))
             return result_search, 200
         except ConnectionFailure as ex:
             return ex.args[0], 500
@@ -52,7 +53,7 @@ class Database:
                 query += "' }}"
                 sort = list({'score':{'$meta':'textScore'}}.items())
                 query = ast.literal_eval(query)
-                result_search = list(self.new_books.find(query, sort=sort))
+                result_search = list(self.book.find(query, sort=sort))
                 return result_search, 200
         except ConnectionFailure as ex:
             return ex.args[0], 500
@@ -64,7 +65,7 @@ class Database:
         """
         try:
             sort = list({'published_at': -1}.items())
-            result_search = list(self.new_books.find(sort=sort))
+            result_search = list(self.book.find(sort=sort))
             return result_search, 200
         except ConnectionFailure as ex:
             return ex.args[0], 500
@@ -78,7 +79,7 @@ class Database:
         :return: Tupla com o livro e status code
         """
         try:
-            result = list(self.new_books.find({"_id": ObjectId(id)}))
+            result = list(self.book.find({"_id": ObjectId(id)}))
             return result, 200
         except ConnectionFailure as ex:
             return ex.args[0], 500

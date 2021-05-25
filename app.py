@@ -18,7 +18,6 @@ def general_search():
     filters = request.data.decode("utf-8")
     filters = literal_eval(filters)
     log_for_search.generate_log_from_search_engine(filters)
-    #talvez um pop aqui seja necessário...
     response = search.general_search(filters)
     return Controller.search.data_treatment(response)
 
