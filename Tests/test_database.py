@@ -1,8 +1,5 @@
 from unittest import TestCase, mock
-
-from pymongo.errors import ConnectionFailure
-
-import Controller.search
+from flask import request
 from Database import DataBase
 
 
@@ -47,7 +44,15 @@ class TestDatabase(TestCase):
             mock_new_books.find.return_value = []
             self.assertEqual(DataBase.Database().search_by_id("609ec0b6d2334d102f6561bb"), ([], 200))
 
+    @mock.patch("Database.DataBase.Database.search_history", create=True)
+    @mock.patch("Database.DataBase.datetime")
+    @mock.patch("Database.DataBase.request")
+    def test_get_history_searches_works(self, mock_request, mock_datetime, mock_search_history):
+        mock_request.request.return_value = mock.Mock()
+        mock_request.request.get_json().return_value = {"initial_date", "final_date"}
+        mock_datetime.strptime.return_value = '%Y-%m-%d'
 
+        with mock.patch.object(DataBase.Database, "__init__", lambda x: None) as mock_db:
+            mock_search_history.find.return_value = []
 
-
-
+            self.assertEqual(DataBase.Database().search_by_id(""), ([], 200))
