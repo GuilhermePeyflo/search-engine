@@ -9,7 +9,7 @@ def generate_log_from_search_engine(filters: dict):
     :return: True
     """
     search = filters.copy()
-    search["user_id"] = filters["user_id"]
+    # search["user_id"] = filters["user_id"]
     search["created_at"] = datetime.now()
 
     execute = DataBase.Database().search_history.insert_one(search)
