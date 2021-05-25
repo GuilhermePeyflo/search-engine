@@ -49,9 +49,8 @@ def general_search(filters: dict) -> tuple:
             query += "]}] }"
 
     except:
-        for filter in filters:
-            query = "{ '$and' : [{" + "'item_price': { '$gte' :" + f"{filters[filter]['min']}" + "}}, " \
-                                "{" + "'item_price': { '$lte' :" + f"{filters[filter]['max']}" + "}} ] }"
+        query = "{ '$and' : [{" + "'item_price': { '$gte' :" + f"{filters['price']['min']}" + "}}, " \
+                "{" + "'item_price': { '$lte' :" + f"{filters['price']['max']}" + "}} ] }"
 
     query = ast.literal_eval(query)
     result = database.general_search(query)
