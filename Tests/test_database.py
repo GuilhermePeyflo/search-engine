@@ -1,11 +1,5 @@
 from unittest import TestCase, mock
-
-from pymongo.errors import ConnectionFailure
-
-import Controller.search
 from Database import DataBase
-
-
 
 
 class TestDatabase(TestCase):
@@ -46,8 +40,3 @@ class TestDatabase(TestCase):
         with mock.patch.object(DataBase.Database, "__init__", lambda x: None) as mock_db:
             mock_new_books.find.return_value = []
             self.assertEqual(DataBase.Database().search_by_id("609ec0b6d2334d102f6561bb"), ([], 200))
-
-
-
-
-

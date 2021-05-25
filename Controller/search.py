@@ -15,33 +15,44 @@ def general_search(filters: dict) -> tuple:
     if filters == {}:
         return [], 400
 
-    query = "{ '$and': [ { '$or': [ "
     price = ""
+    query = ""
 
-    for filter in filters:
-        if isinstance(filters[filter], dict):
-            if filter == "price":
-                price += "]} , { '$and' : [{" + "'item_price': { '$gte' :" + f"{filters[filter]['min']}" + "}}, " \
-                        "{" + "'item_price': { '$lte' :" + f"{filters[filter]['max']}" + "}} ] }"
+    try:
+        filters['category']
+        query = "{ '$and': [ { '$or': [ "
+
+
+        for filter in filters:
+            if isinstance(filters[filter], dict):
+                if filter == "price":
+                    price += "]} , { '$and' : [{" + "'item_price': { '$gte' :" + f"{filters[filter]['min']}" + "}}, " \
+                            "{" + "'item_price': { '$lte' :" + f"{filters[filter]['max']}" + "}} ] }"
+                else:
+                    for item in filters[filter]:
+                        query += "{" + f"'{filter}.{item}': '{filters[filter][item]}'" + "}, "
+            elif isinstance(filters[filter], list):
+                if isinstance(filters[filter][0], dict):
+                   for item_dict in filters[filter]:
+                        for item in item_dict:
+                            query += "{" + f"'{filter}.{item}': '{item_dict[item]}'" + "}, "
+                else:
+                    for item in filters[filter]:
+                        query += "{" + f"'{filter}': '{item}'" + "}, "
             else:
-                for item in filters[filter]:
-                    query += "{" + f"'{filter}.{item}': '{filters[filter][item]}'" + "}, "
-        elif isinstance(filters[filter], list):
-            if isinstance(filters[filter][0], dict):
-               for item_dict in filters[filter]:
-                    for item in item_dict:
-                        query += "{" + f"'{filter}.{item}': '{item_dict[item]}'" + "}, "
-            else:
-                for item in filters[filter]:
-                    query += "{" + f"'{filter}': '{item}'" + "}, "
+                query += "{" + f"'{filter}': '{filters[filter]}'" + "}, "
+
+        query = query[0:-2]
+        if price != "":
+            query += price + "]}"
         else:
-            query += "{" + f"'{filter}': '{filters[filter]}'" + "}, "
+            query += "]}] }"
 
-    query = query[0:-2]
-    if price != "":
-        query += price + "]}"
-    else:
-        query += "]}] }"
+    except:
+        for filter in filters:
+            query = "{ '$and' : [{" + "'item_price': { '$gte' :" + f"{filters[filter]['min']}" + "}}, " \
+                                "{" + "'item_price': { '$lte' :" + f"{filters[filter]['max']}" + "}} ] }"
+
     query = ast.literal_eval(query)
     result = database.general_search(query)
     return result
